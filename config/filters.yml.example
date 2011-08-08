@@ -1,0 +1,15 @@
+# Simple example
+redirectUserAgent:
+  class:  redirectUserAgentFilter
+  enabled: on
+  param:
+    redirectUrl: http://mobile.yourdomain.com
+    userAgents:
+      - android
+      - iphone
+      - ipod
+      - ipad
+      - blackberry      
+    # prevent a mobile device with the configured userAgents to be redirected
+    stopParameters:
+      - no_mobile         

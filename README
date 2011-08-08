@@ -1,0 +1,17 @@
+# bsMobilePlugin #
+
+Detect the mobile handset by its user agent and redirect to the provided mobile site. This is the code from this blog post in an easy to install plugin: [Blog post](http://jnotes.jonasfischer.net/2009/11/symfony-filter-redirect-useragent/ "Symfony filter redirect useragent")
+
+## Installation ##
+
+Install from the project root.
+
+* For a git project
+
+        $ git submodule add bsgitexternal:beeldspraak/sf/bsMobilePlugin plugins/bsMobilePlugin
+
+* For other projects, optionally add ".git" to ignore from the version control system
+
+        $ git clone bsgitexternal:beeldspraak/sf/bsMobilePlugin plugins/bsMobilePlugin
+        
+* enable the plugin in _config/ProjectConfiguration.class.php_
