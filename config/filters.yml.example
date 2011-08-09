@@ -12,4 +12,7 @@ redirectUserAgent:
       - blackberry      
     # prevent a mobile device with the configured userAgents to be redirected
     stopParameters:
-      - no_mobile         
+      - no_mobile
+    stopRoutes:
+      - project_api
+      - recent_api
