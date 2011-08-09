@@ -113,7 +113,7 @@ class redirectUserAgentFilter extends sfFilter
 
   public static function resetStopForUser(sfUser $user)
   {
-    $user->getAttributeHolder->remove('stop', 'bs_mobile');
+    $user->getAttributeHolder()->remove('stop', null, 'bs_mobile');
   }
 
   public static function hasStopForUser(sfUser $user)
