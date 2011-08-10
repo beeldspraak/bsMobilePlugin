@@ -5,7 +5,8 @@ redirectUserAgent:
   param:
     redirectUrl: http://mobile.yourdomain.com
     userAgents:
-      - android
+      - android, mobile # android mobile, seperate multiple words in the user agent by a comma
+      - android # android tablet
       - iphone
       - ipod
       - ipad

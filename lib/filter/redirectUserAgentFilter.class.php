@@ -144,13 +144,15 @@ class redirectUserAgentFilter extends sfFilter
       $this->matchedUserAgent = false;
       $userAgent = strtolower($request->getHttpHeader('User-Agent'));
       $userAgents = $this->getUserAgents();
-      foreach ($userAgents as $checkAgent) {
-        if ( false !== strpos($userAgent, $checkAgent) ) {
-          $this->matchedUserAgent = $checkAgent;
+      foreach ($userAgents as $checkAgentWords) {
+        foreach(explode(',', $checkAgentWords) as $checkAgent) {
+          if (false === strpos($userAgent, trim($checkAgent))) {
+            continue 2;
+          }
         }
+        $this->matchedUserAgent = $checkAgentWords;
       }
     }
-    
     return $this->matchedUserAgent;
   }
 
