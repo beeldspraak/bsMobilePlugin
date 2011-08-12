@@ -14,9 +14,18 @@ redirectUserAgent:
   param:
     redirectUrl: http://mobile.yourdomain.com
     userAgents:
-      - android
+      - android, mobile # android mobile, seperate multiple words in the user agent by a comma
+      - android # android tablet
       - iphone
       - ipod
+      - ipad
+      - blackberry      
+    # prevent a mobile device with the configured userAgents to be redirected
+    stopParameters:
+      - no_mobile
+    stopRoutes:
+      - project_api
+      - recent_api
 </pre>
  *
  */
@@ -202,5 +211,17 @@ class redirectUserAgentFilter extends sfFilter
   protected function getStopRoutes()
   {
     return $this->getParameter('stopRoutes', array());
+  }
+  
+  /**
+   * Returns a list of modules and the configuration to map them to the redirectUrl
+   *
+   * Uses mapModules parameter configured in filters.yml but may be overwritten
+   *
+   * @return array
+   */
+  protected function getMapModules()
+  {
+    return $this->getParameter('mapModules', array());
   }
 }

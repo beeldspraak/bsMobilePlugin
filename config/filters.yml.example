@@ -17,3 +17,34 @@ redirectUserAgent:
     stopRoutes:
       - project_api
       - recent_api
+      
+# Forward specific content pages to the coresponding mobile pages
+redirectUserAgent:
+  class:  redirectUserAgentDiemFilter
+  enabled: on
+  param:
+    redirectUrl: http://mobile.yourdomain.com
+    userAgents:
+      - android, mobile # android mobile, seperate multiple words in the user agent by a comma
+      - android # android tablet
+      - iphone
+      - ipod
+      - ipad
+      - blackberry      
+    # prevent a mobile device with the configured userAgents to be redirected
+    stopParameters:
+      - no_mobile
+    stopRoutes:
+      - project_api
+      - recent_api
+    # map the current route for the given modules and add the url to the redirectUrl, replace parameters
+    mapModules:
+      project:
+        url:    '#work/show/:id'
+        params: { id: ':id' } # get the record 'id' to replace ':id'
+      news_post:
+        url:    '#recent/show/:id'
+        params: { id: ':id' }
+      blog_post:
+        url:    '#recent/show/:id'
+        params: { id: ':id' }
