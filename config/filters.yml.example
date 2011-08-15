@@ -37,14 +37,15 @@ redirectUserAgent:
     stopRoutes:
       - project_api
       - recent_api
-    # map the current route for the given modules and add the url to the redirectUrl, replace parameters
-    mapModules:
-      project:
+    # map the current route for the given module and actions and add the url to the redirectUrl, replace parameters
+    mapModuleActions:
+      project/show:
         url:    '#work/show/:id'
         params: { id: ':id' } # get the record 'id' to replace ':id'
-      news_post:
+      news_post/show:
         url:    '#recent/show/:id'
         params: { id: ':id' }
-      blog_post:
+      blog_post/show:
         url:    '#recent/show/:id'
         params: { id: ':id' }
+      main/contact:  { url: '#contact/index' }

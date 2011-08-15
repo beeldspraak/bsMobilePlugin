@@ -26,17 +26,18 @@ redirectUserAgent:
     stopRoutes:
       - project_api
       - recent_api
-    # map the current route for the given modules and add the url to the redirectUrl, replace parameters
-    mapModules:
-      project:
+    # map the current route for the given module and actions and add the url to the redirectUrl, replace parameters
+    mapModuleActions:
+      project/show:
         url:    '#work/show/:id'
         params: { id: ':id' } # get the record 'id' to replace ':id'
-      news_post:
+      news_post/show:
         url:    '#recent/show/:id'
         params: { id: ':id' }
-      blog_post:
+      blog_post/show:
         url:    '#recent/show/:id'
-        params: { id: ':id' }        
+        params: { id: ':id' }
+      main/contact: { url: '#contact/index' }    
 </pre>
  *
  */
@@ -56,33 +57,43 @@ class redirectUserAgentDiemFilter extends redirectUserAgentFilter
     $routing = $context->getRouting();
     $slug = $request->getParameter('slug');
     $pageRoute = $context->getServiceContainer()->getService('page_routing')->find($slug);
-    
-    // check if a matching pageRoute is found that has a page and a record
-    if ( $pageRoute && $pageRoute->getPage() && $pageRoute->getPage()->hasRecord() ) {
+
+    // check if a matching pageRoute is found that has a page
+    if ( $pageRoute && $pageRoute->getPage() ) {
+      
       // find a mapped mobile route
-      $module = sfInflector::underscore($pageRoute->getPage()->get('module'));
-      $mapModules = $this->getMapModules();
-      if (isset($mapModules[$module])) {
+      $moduleAction = $pageRoute->getPage()->getModuleAction();
+      $mapModuleActions = $this->getMapModuleActions();
+      
+      if (isset($mapModuleActions[$moduleAction])) {
         // prepare path
-        $mappedModule = $mapModules[$module];
+        $mappedModule = $mapModuleActions[$moduleAction];
         $url = isset($mappedModule['url']) ? $mappedModule['url'] : false;
-        $record = $pageRoute->getPage()->getRecord();
-        if ($url && isset($mappedModule['params'])) {
+        
+        // optionally process parameters
+        $parametersFailure = false;
+        $replacePairs = array();
+        if ($pageRoute->getPage()->hasRecord() && $url && isset($mappedModule['params'])) {
+          $record = $pageRoute->getPage()->getRecord();
+
           // replace parameters in path
-          $replacePairs = array();
-          $replacePairsFailure = false;
           foreach ($mappedModule['params'] as $property => $parameter) {
             if (!$record->getTable()->hasField($property)) {
-              $replacePairsFailure = true;
+              $parametersFailure = true;
               break;
             }
             $replacePairs[$parameter] = $record->get($property);
           }
-          if (!$replacePairsFailure) {
+        }
+        
+        // replace parameters or use a static route
+        if (!$parametersFailure) {
+          if (count($replacePairs)) {
             $result = strtr($url, $replacePairs);
+          } else {
+            $result = $url;
           }
         }
-
       }
     }
     
@@ -100,5 +111,17 @@ class redirectUserAgentDiemFilter extends redirectUserAgentFilter
   protected function getRedirectUrl()
   {
     return parent::getRedirectUrl().$this->getRedirectUrlPath();
+  }
+  
+  /**
+   * Returns a list of module-action combinations and the configuration to map them to the redirectUrl
+   *
+   * Uses mapModuleActions parameter configured in filters.yml but may be overwritten
+   *
+   * @return array
+   */
+  protected function getMapModuleActions()
+  {
+    return $this->getParameter('mapModuleActions', array());
   }
 }

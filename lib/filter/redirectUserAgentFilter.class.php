@@ -49,7 +49,7 @@ class redirectUserAgentFilter extends sfFilter
       $routing = $context->getRouting();
       
       // check if a redirect stop is stored in the user session
-      if ( self::hasStopForUser($user) ) {
+      if ( $user->hasRedirectStop() ) {
         // proceed filter chain
         $filterChain->execute();
         return;
@@ -62,7 +62,7 @@ class redirectUserAgentFilter extends sfFilter
         // check for stop parameters
         foreach ($this->getStopParameters() as $stopParameter) {
           if ( $request->hasParameter($stopParameter) ) {
-            self::setStopForUser($user, $userAgent);
+            $user->setRedirectStop($userAgent);
             // proceed filter chain
             $filterChain->execute();
             return;
@@ -113,31 +113,6 @@ class redirectUserAgentFilter extends sfFilter
   	</script>';
     
     return str_replace('<head>', '</head><head>' . $script, $content);
-  }
-
-  public static function setStopForUser(sfUser $user, $userAgent)
-  {
-    $user->setAttribute('stop', $userAgent, 'bs_mobile');
-  }
-
-  public static function resetStopForUser(sfUser $user)
-  {
-    $user->getAttributeHolder()->remove('stop', null, 'bs_mobile');
-  }
-
-  public static function hasStopForUser(sfUser $user)
-  {
-    return $user->getAttribute('stop', false, 'bs_mobile') ? true : false;
-  }
-
-  public static function isMobileDeviceForUser(sfUser $user)
-  {
-    return self::hasStopForUser($user);
-  }
-  
-  public static function getMobileDeviceForUser(sfUser $user)
-  {
-    return $user->getAttribute('stop', false, 'bs_mobile');
   }
 
   /**
@@ -211,17 +186,5 @@ class redirectUserAgentFilter extends sfFilter
   protected function getStopRoutes()
   {
     return $this->getParameter('stopRoutes', array());
-  }
-  
-  /**
-   * Returns a list of modules and the configuration to map them to the redirectUrl
-   *
-   * Uses mapModules parameter configured in filters.yml but may be overwritten
-   *
-   * @return array
-   */
-  protected function getMapModules()
-  {
-    return $this->getParameter('mapModules', array());
   }
 }
